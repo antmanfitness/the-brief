@@ -196,9 +196,76 @@ main:not(.tab-today) .paneL{display:none}
  .tabs{left:env(viewport-segment-left 1 0);transform:translateX(16px)}
  .modal{justify-content:flex-start}.sheet{margin-left:calc(env(viewport-segment-left 1 0) + (env(viewport-segment-width 1 0) - min(560px,env(viewport-segment-width 1 0)))/2)}
 }
+
+/* ---- v10: badges, weather, Sophia, segmented, gym colors, peek ---- */
+.tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.tile{align-items:center;justify-content:center;padding:14px 0;position:relative;overflow:visible}
+.ic.big{width:52px;height:52px;border-radius:50%;position:relative}.ic.big svg{width:26px;height:26px}
+.badge{position:absolute;top:-5px;right:-7px;min-width:21px;height:21px;padding:0 6px;border-radius:999px;background:#FF3B30;color:#fff;font:700 12px/21px -apple-system,system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px rgba(0,0,0,.85);animation:badgeIn .5s var(--spring) both,badgePulse 2.6s ease-in-out .6s 2}
+.ltrow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ltrow h1{flex:1}
+.sbtn{flex:none;margin-top:4px;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:9px 14px;color:#fff;font:600 15px -apple-system,system-ui,sans-serif;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:var(--spec),var(--edge);cursor:pointer}
+.sbtn svg{width:18px;height:18px;fill:none;stroke:var(--accent2);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.wx{display:flex;align-items:center;gap:12px;margin:2px 0 14px;padding:10px 14px;border-radius:999px;min-height:48px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:var(--spec),var(--edge);opacity:0;transform:translateY(4px);transition:opacity .4s,transform .4s var(--spring)}
+.wx.ready{opacity:1;transform:none}.wx:empty{display:none}
+.wxi svg{width:28px;height:28px;fill:none;stroke:#ffd60a;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;display:block}
+.wxt{display:flex;align-items:baseline;gap:8px;flex:1;min-width:0}.wxt b{font-size:22px}.wxt span{color:rgba(255,255,255,.85);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wxr{display:flex;flex-direction:column;align-items:flex-end;font-size:12px;color:rgba(255,255,255,.85);flex:none}
+.wxr span{display:flex;align-items:center;gap:3px}.wxr svg{width:11px;height:11px;fill:none;stroke:#64d2ff;stroke-width:2.4}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:0 0 10px;padding:3px;border-radius:999px;background:rgba(120,120,128,.24);box-shadow:var(--spec)}
+.seg button{position:relative;z-index:1;border:0;background:none;color:#fff;font:600 14px -apple-system,system-ui,sans-serif;padding:7px 0;border-radius:999px;cursor:pointer}
+.seg i{position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 2px 8px rgba(0,0,0,.3);transition:transform .35s var(--spring)}
+.seg button.on:last-of-type~i{transform:translateX(100%)}
+.ag .bar{background:var(--gc,var(--card2))!important;opacity:.9}
+.ag.next .bar{background:var(--gc,var(--accent))!important}
+.agm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:2px}
+.gp{display:inline-block;max-width:100%;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;color:var(--gc);background:color-mix(in srgb,var(--gc) 22%,transparent);box-shadow:inset 0 0 0 .5px color-mix(in srgb,var(--gc) 50%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gh{display:flex;align-items:center;gap:8px;padding:12px 16px 4px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.3px}
+.gd{width:9px;height:9px;border-radius:50%;background:var(--gc);flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--gc) 25%,transparent)}
+.dotn{background:var(--gc,var(--accent))!important}
+.pk{padding:10px 16px;position:relative}.pk+.pk::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.pkd{display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:4px}
+.pki{display:flex;align-items:center;gap:8px;padding:3px 0;min-width:0}.tm2{color:var(--muted);font-size:13px;width:62px;flex:none;font-variant-numeric:tabular-nums}
+.pkn{flex:1;min-width:0;font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pki .gp{flex:none;max-width:38%}
+/* ---- motion (Set Orbit feel) ---- */
+:root{--spring:cubic-bezier(.32,.72,0,1);--pop:cubic-bezier(.34,1.56,.64,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes tabIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@keyframes iconBounce{0%{transform:scale(1)}35%{transform:scale(.82)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes badgeIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes ripple{from{opacity:.55;transform:scale(.6)}to{opacity:0;transform:scale(1.6)}}
+@keyframes reflow{from{opacity:.4;transform:scale(.985)}to{opacity:1;transform:none}}
+@keyframes swap{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:fadeUp .42s var(--spring) both;animation-delay:calc(var(--i,0) * 40ms)}
+#view{animation:tabIn .22s var(--spring) both}
+#view.reflow{animation:reflow .38s var(--spring) both}
+#agw.swap{animation:swap .26s var(--spring) both}
+.tabs button.on svg{animation:iconBounce .42s var(--pop)}
+.tile .ic.big::after{content:"";position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,rgba(95,216,149,.55),transparent 65%);opacity:0;pointer-events:none}
+.tile:active .ic.big::after{animation:ripple .5s ease-out}
+.tile:active{transform:scale(.94)}
+.press{transition:transform .25s var(--pop),opacity .15s}.press:active{transform:scale(.96)}
+/* orbit PTR spinner */
+.ptr .sp{position:relative;border:1px solid rgba(95,216,149,.35)!important;border-top-color:rgba(95,216,149,.35)!important;background:none}
+.ptr .sp::after{content:"";position:absolute;top:-4px;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.ptr.go .sp{animation:spin .9s var(--spring) infinite}
+/* sleep ring orbit sweep */
+#arc{transition:stroke-dashoffset 1.2s var(--spring)!important}
+.ring .planet{transform-origin:90px 90px;transform-box:view-box;transition:transform 1.2s var(--spring)}
+/* sheet spring + dimming backdrop (opacity only) */
+.modal{background:none!important}
+.modal::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .3s}
+.modal.in::before{opacity:1}
+.sheet{position:relative;transition:transform .5s var(--spring)!important}
+@media (min-width:700px),(horizontal-viewport-segments:2){.sheet{transform:translateY(40px) scale(.96);opacity:0;transition:transform .45s var(--spring),opacity .25s!important}.modal.in .sheet{transform:none;opacity:1}}
+@media (prefers-reduced-transparency: reduce){.wx,.sbtn{background:#1c1c1e;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-contrast: more){.wx,.sbtn,.seg{box-shadow:0 0 0 1px rgba(255,255,255,.55)!important}.badge{box-shadow:0 0 0 2px #000}}
+@media (prefers-reduced-motion: reduce){.enter,#view,.badge,.tabs button.on svg{animation:none!important}.wx{transition:none}}
 </style></head><body><div id="app"></div>
 <script>
-const BUILD=9;let RESTORE_Y=0;
+const BUILD=10;let RESTORE_Y=0;
 const SB='https://bvbcydanngfzemnnbuxa.supabase.co',KEY='sb_publishable_6ty7ZiomiqfHSr8HT07-sQ_2gMLSkZe';
 const $=s=>document.querySelector(s),app=$('#app');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -211,7 +278,7 @@ async function api(path,opt={}){const t=await tok();const r=await fetch(SB+path,
 function logout(){sess=null;localStorage.removeItem('brief-sess');renderLogin()}
 const mapUser=v=>{const u=v.trim().toLowerCase();return u==='krishna'?'antmanfitness@gmail.com':(u.includes('@')?u:null)};
 const REDIR='https://antmanfitness.github.io/the-brief/';
-const IC={"mail": "<path d=\"M3 6h18v12H3z\"/><path d=\"m3 7 9 6 9-6\"/>", "cal": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m8 12 3 3 5-6\"/>", "box": "<path d=\"M21 8 12 3 3 8v8l9 5 9-5z\"/><path d=\"m3 8 9 5 9-5M12 13v8\"/>", "moon": "<path d=\"M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z\"/>", "today": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8 9h8M8 13h8M8 17h5\"/>", "more": "<circle cx=\"5\" cy=\"12\" r=\"1.5\"/><circle cx=\"12\" cy=\"12\" r=\"1.5\"/><circle cx=\"19\" cy=\"12\" r=\"1.5\"/>", "heart": "<path d=\"M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M17 6l3 3\"/>", "out": "<path d=\"M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10\"/>", "spark": "<path d=\"M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6\"/>", "ok": "<path d=\"m5 12 5 5 9-10\"/>"};const svg=(n)=>`<svg viewBox="0 0 24 24">${IC[n]}</svg>`;
+const IC={"mail": "<path d=\"M3 6h18v12H3z\"/><path d=\"m3 7 9 6 9-6\"/>", "cal": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m8 12 3 3 5-6\"/>", "box": "<path d=\"M21 8 12 3 3 8v8l9 5 9-5z\"/><path d=\"m3 8 9 5 9-5M12 13v8\"/>", "moon": "<path d=\"M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z\"/>", "today": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8 9h8M8 13h8M8 17h5\"/>", "more": "<circle cx=\"5\" cy=\"12\" r=\"1.5\"/><circle cx=\"12\" cy=\"12\" r=\"1.5\"/><circle cx=\"19\" cy=\"12\" r=\"1.5\"/>", "heart": "<path d=\"M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M17 6l3 3\"/>", "out": "<path d=\"M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10\"/>", "spark": "<path d=\"M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6\"/>", "ok": "<path d=\"m5 12 5 5 9-10\"/>"};Object.assign(IC,{"chat": "<path d=\"M4 5h16v11H9l-5 4z\"/>", "note": "<path d=\"M5 4h10l4 4v12H5z\"/><path d=\"M14 4v5h5M8 13h8M8 17h5\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5\"/>", "cloud": "<path d=\"M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 18z\"/>", "psun": "<path d=\"M8 4v1.5M3.5 8H5M4.8 4.8l1 1\"/><circle cx=\"8.5\" cy=\"8.5\" r=\"2.5\"/><path d=\"M8 19h9a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.4 1A3 3 0 0 0 8 19z\"/>", "rain": "<path d=\"M7 15h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 15z\"/><path d=\"M8 18l-1 3M12 18l-1 3M16 18l-1 3\"/>", "snow": "<path d=\"M7 15h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 15z\"/><path d=\"M8 19h.01M12 21h.01M16 19h.01\"/>", "bolt": "<path d=\"M7 15h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 15z\"/><path d=\"m12 15-2 4h3l-2 4\"/>", "fog": "<path d=\"M4 9h16M6 13h12M4 17h16\"/>", "drop": "<path d=\"M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z\"/>"});const svg=(n)=>`<svg viewBox="0 0 24 24">${IC[n]}</svg>`;
 
 function renderLogin(msg=''){document.body.classList.remove('shell');app.innerHTML=`<div class="login"><h1>The <b>Brief</b></h1><p class="sub" style="margin:4px 0 26px">Your morning, on one screen.</p>
 <form id="lf"><div class="group form"><div class="cell"><input id="em" type="text" placeholder="Username" aria-label="Username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></div>
@@ -251,10 +318,11 @@ function shell(){document.body.classList.add('shell');
 const upd=D.updated_at?'Last updated '+etTime(D.updated_at):'Not updated yet today';
 const title=TAB==='today'?'Welcome to the Brief':TABS.find(t=>t[0]===TAB)[1];
 app.innerHTML=`<div class="navbar" id="nb"><div class="nt">${title}</div></div><div class="wrap" id="wr"><div class="ptr" id="ptr"><div class="sp"></div><span id="ptrt">Pull to refresh</span></div>
-<div class="lt"><h1 id="lt">${title}</h1><div class="upd">${esc(upd)}</div>${TAB==='today'?'<h2 class="obj">Today’s objectives</h2>':''}</div>${D.is_example?'<div class="banner">EXAMPLE DATA — not real.</div>':''}<main id="view" class="tab-${TAB}"><div class="paneL" id="pl"></div><div class="paneR" id="pr"></div></main></div>
+<div class="lt"><div class="ltrow"><h1 id="lt">${title}</h1><button class="sbtn press" id="msgS" aria-label="Message Sophia">${svg('chat')}<span>Sophia</span></button></div><div class="upd">${esc(upd)}</div>${TAB==='today'?'<div id="wx" class="wx"></div><h2 class="obj">Today’s objectives</h2>':''}</div>${D.is_example?'<div class="banner">EXAMPLE DATA — not real.</div>':''}<main id="view" class="tab-${TAB}"><div class="paneL" id="pl"></div><div class="paneR" id="pr"></div></main></div>
 <nav class="tabs">${TABS.map(t=>`<button class="${t[0]===TAB?'on':''}" data-t="${t[0]}" aria-label="${t[1]}">${svg(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>`;
 app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{const tb=$('.tabs');if(tb.classList.contains('min')&&b.dataset.t===TAB){tb.classList.remove('min');return}TAB=b.dataset.t;localStorage.setItem('brief-tab',TAB);shell();scrollTo(0,0)});
-vSummary($('#pl'));({today:vToday,orders:vOrders,sleep:vSleep,more:vMore})[TAB]($('#pr'));if(RESTORE_Y){const y=RESTORE_Y;RESTORE_Y=0;requestAnimationFrame(()=>scrollTo(0,y))}onScroll()}
+$('#msgS').onclick=msgSophia;if($('#wx'))loadWx();vSummary($('#pl'));({today:vToday,orders:vOrders,sleep:vSleep,more:vMore})[TAB]($('#pr'));stagger();if(RESTORE_Y){const y=RESTORE_Y;RESTORE_Y=0;requestAnimationFrame(()=>scrollTo(0,y))}onScroll()}
+const MQ=matchMedia('(min-width:700px),(horizontal-viewport-segments:2)');const onMQ=()=>{const v=$('#view');if(!v)return;v.classList.remove('reflow');void v.offsetWidth;v.classList.add('reflow')};MQ.addEventListener?MQ.addEventListener('change',onMQ):MQ.addListener(onMQ);
 let lastY=0;function onScroll(){const nb=$('#nb'),lt=$('#lt');if(!nb)return;const y=scrollY;const tb=$('.tabs');if(tb){if(y>lastY+6&&y>80)tb.classList.add('min');else if(y<lastY-6||y<40)tb.classList.remove('min');}lastY=y;nb.classList.toggle('sm',y>38);if(lt){const s=y<0?Math.min(1.12,1-y/400):Math.max(.8,1-y/200);lt.style.transform=`scale(${s})`;lt.style.opacity=y>45?0:1}}
 addEventListener('scroll',onScroll,{passive:true});
 // pull to refresh
@@ -267,24 +335,70 @@ return [['mail','var(--blue)','Emails',em.length?`${em.length} need${em.length==
 ['cal','var(--red)','Sessions',se.length?(nx?`Next up ${esc(nx.time)} with ${esc(nx.name)}.`:`All ${se.length} sessions done for today.`):'No sessions booked today.'],
 ['check','var(--accent)','To-dos',td.length?(open?`${open} open, ${td.length-open} done.`:'Everything checked off. Nice.'):'Nothing carried over.'],
 ['box','var(--orange)','Orders',or.length?(na?`${na} need${na===1?'s':''} action. `:'')+(tr?`${tr} in transit.`:'')||'All delivered.':'No orders in flight.'],
-['moon','var(--purple)','Sleep',sl.score!=null||sl.hours!=null?`${sl.hours!=null?esc(sl.hours)+' h':''}${sl.score!=null?' · score '+esc(sl.score):''}${D.checkin?' · felt '+esc(D.checkin.sleep_quality)+'/5':''}`:'No sleep data yet.']]
+['moon','var(--purple)','Sleep',sl.score!=null||sl.hours!=null?'Last night’s sleep is ready on the Sleep tab.':'No sleep data yet — see the Sleep tab.']]
 .map(h=>`<div class="hl cell"><div class="grow"><div class="k" style="color:${h[1]}">${svg(h[0])}${h[2]}</div><div>${h[3]}</div></div></div>`).join('')}
-function vSummary(v){const em=arr(D.emails),se=arr(D.sessions),td=arr(D.todos),or=arr(D.orders);
+function vSummary(v){const em=arr(D.emails),se=arr(D.sessions),td=arr(D.todos),or=arr(D.orders);const ci=D.checkin;
+const bd=n=>n>0?`<span class="badge">${n>9?'9+':n}</span>`:'';
 const tiles=[['s-em','mail','var(--blue)','Emails',em.length],['s-se','cal','var(--red)','Sessions',se.length],['s-td','check','var(--accent)','To-dos',td.length-[...getDone()].filter(i=>i<td.length).length],['s-or','box','var(--orange)','Orders',or.length]];
-v.innerHTML=`<div class="tiles">${tiles.map(t=>`<div class="tile press" data-go="${t[0]}" role="button"><div class="top"><div class="ic" style="background:${t[2]}">${svg(t[1])}</div><b>${t[4]}</b></div><span>${t[3]}</span></div>`).join('')}</div>
-${D.checkin?'':`<div class="group press" style="margin-top:10px" id="cibar"><div class="cell"><div class="ic sq" style="background:var(--accent)">${svg('heart')}</div><div class="grow"><div class="ttl">Morning check-in</div><div class="sub sm">Takes 20 seconds</div></div><span class="chev2">›</span></div></div>`}
-<div class="sh big">Highlights</div>${DS('One-line takeaways from each section')}<div class="group">${highlights()}</div>
-`;
+v.innerHTML=`<div class="tiles">${tiles.map(t=>`<div class="tile press" data-go="${t[0]}" role="button" aria-label="${t[3]}: ${t[4]}" title="${t[3]}"><div class="ic big" style="background:${t[2]}">${svg(t[1])}${bd(t[4])}</div></div>`).join('')}</div>
+<div class="group press" style="margin-top:12px" id="cibar"><div class="cell"><div class="ic sq" style="background:${ci?'#30d158':'var(--accent)'}">${svg(ci?'ok':'heart')}</div><div class="grow"><div class="ttl">Morning check-in</div><div class="sub sm">${ci?'Done today · tap to review':'Not done yet · takes 20 seconds'}</div></div>${ci?'<span class="pill p-g">Done</span>':'<span class="chev2">›</span>'}</div></div>
+<div class="sh big">Highlights</div>${DS('One-line takeaways from each section')}<div class="group">${highlights()}</div>`;
 v.querySelectorAll('[data-go]').forEach(t=>t.onclick=()=>{const go=()=>{const el=$('#'+t.dataset.go);if(el)scrollTo({top:el.getBoundingClientRect().top+scrollY-70,behavior:'smooth'})};if(TAB!=='today'){TAB='today';localStorage.setItem('brief-tab',TAB);shell();setTimeout(go,50)}else go()});
-if($('#cibar'))$('#cibar').onclick=()=>checkin(DATE)}
+$('#cibar').onclick=()=>checkin(DATE)}
 function vToday(v){const em=arr(D.emails),se=arr(D.sessions),td=arr(D.todos),or=arr(D.orders);v.innerHTML=`<div class="sh" id="s-td"><span>To-dos</span></div>${DS('What to get done today; tap to check off')}<div id="todos"></div>
-<div class="sh" id="s-se"><span>Sessions</span><span>${se.length||''}</span></div>${DS('Your client sessions and calls, in time order')}<div class="group">${agenda(se)}</div>
+<div class="sh" id="s-se"><span>Sessions</span><span>${se.length||''}</span></div>${DS('Your client sessions and calls, in time order')}<div class="seg" role="tablist"><button data-m="time" class="${SEM==='time'?'on':''}">Time</button><button data-m="gym" class="${SEM==='gym'?'on':''}">Gym</button><i></i></div><div class="group" id="agw">${agenda(se)}</div>
+<div class="sh"><span>Next few days</span></div>${DS('Client sessions coming up over the next few days')}<div class="group" id="peek">${peek()}</div>
 <div class="sh" id="s-em"><span>Important emails</span><span>${em.length||''}</span></div>${DS('Important emails that need you today')}<div class="group">${em.length?em.map(e=>`<div class="cell ind"><div class="ic" style="background:var(--blue)">${svg('mail')}</div><div class="grow"><div class="ttl">${esc(e.sender)}</div><div>${safeUrl(e.link)?`<a href="${safeUrl(e.link)}" target="_blank" rel="noopener">${esc(e.subject)}</a>`:esc(e.subject)}</div>${e.why?`<div class="sub sm">${esc(e.why)}</div>`:''}</div></div>`).join(''):empty('mail','Inbox is calm. Nothing urgent.')}</div>
 <div class="sh" id="s-or"><span>Orders</span><span>${or.length||''}</span></div>${DS('Shipments and orders that need action or are on the way')}<div class="group press" id="toor"><div class="cell"><div class="grow">${or.length?`${or.length} order${or.length>1?'s':''} — see Orders tab`:'No orders in flight'}</div><span class="chev2">›</span></div></div>`;
 $('#toor').onclick=()=>{TAB='orders';localStorage.setItem('brief-tab',TAB);shell();scrollTo(0,0)};
+v.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{SEM=b.dataset.m;localStorage.setItem('brief-se-mode',SEM);v.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b));const w=$('#agw');w.innerHTML=agenda(arr(D.sessions));w.classList.remove('swap');void w.offsetWidth;w.classList.add('swap')});
 renderTodos()}
+let SEM=localStorage.getItem('brief-se-mode')||'time';
+const PAL=['#30d158','#0a84ff','#ff9f0a','#bf5af2','#ff375f','#40c8e0'];
+function hash(t){let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))>>>0;return h}
+const isHex=c=>/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(c||'').trim());
+function sesColor(x){if(x&&isHex(x.color))return x.color.trim();const g=x&&String(x.gym||'').trim();return g?PAL[hash(g.toLowerCase())%PAL.length]:null}
+const nameColor=x=>{const c=sesColor(x);return c?liftText(c):'#fff'};const dotColor=x=>sesColor(x)||'#2fbf71';
+function liftText(hex){let h=hex.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');let r=parseInt(h.slice(0,2),16)/255,g=parseInt(h.slice(2,4),16)/255,b=parseInt(h.slice(4,6),16)/255;
+const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let H=0,S=0,L=(mx+mn)/2;if(mx!==mn){const d=mx-mn;S=L>.5?d/(2-mx-mn):d/(mx+mn);H=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;H*=60}
+const lum=.2126*r+.7152*g+.0722*b;return lum<.38?`hsl(${Math.round(H)} ${Math.round(S*100)}% ${Math.max(Math.round(L*100),64)}%)`:hex}
+const gymPill=x=>{const g=String(x.gym||'').trim();if(!g)return'';const c=dotColor(x);return `<span class="gp" style="--gc:${c}">${esc(g)}</span>`};
+function agRow(x,cls,next){const c=dotColor(x);return `<div class="ag ${cls}" style="--gc:${c}"><div class="tm">${esc(x.time)}</div><div class="bar"></div><div class="grow">${next?'<div class="nu" style="display:flex;align-items:center;gap:6px"><span class="dotn"></span>Next up</div>':''}<div class="ttl" style="color:${nameColor(x)}">${esc(x.name)}</div><div class="agm">${gymPill(x)}${x.type||x.note?`<span class="sub sm">${esc(x.type||x.note)}</span>`:''}</div></div></div>`}
 function agenda(se){if(!se.length)return empty('cal','No sessions booked today. Enjoy the space.');const s=se.slice().sort((a,b)=>toMin(a.time)-toMin(b.time)),n=nowMin();const ni=s.findIndex(x=>toMin(x.time)>=n);
-return s.map((x,i)=>`<div class="ag ${i===ni?'next':(ni===-1||i<ni)&&toMin(x.time)<9999?'past':''}"><div class="tm">${esc(x.time)}</div><div class="bar"></div><div class="grow">${i===ni?'<div class="nu" style="display:flex;align-items:center;gap:6px"><span class="dotn"></span>Next up</div>':''}<div class="ttl">${esc(x.name)}</div>${x.type||x.note?`<div class="sub sm">${esc(x.type||x.note)}</div>`:''}</div></div>`).join('')}
+const cls=(x,i)=>i===ni?'next':(ni===-1||i<ni)&&toMin(x.time)<9999?'past':'';
+if(SEM!=='gym')return s.map((x,i)=>agRow(x,cls(x,i),i===ni)).join('');
+const G=new Map();s.forEach((x,i)=>{const g=String(x.gym||'').trim()||'Other';if(!G.has(g))G.set(g,[]);G.get(g).push([x,i])});
+const keys=[...G.keys()].sort((a,b)=>a==='Other'?1:b==='Other'?-1:a.localeCompare(b));
+return keys.map(g=>{const items=G.get(g),c=g==='Other'?'#8e8e93':(sesColor(items.find(z=>isHex(z[0].color))?.[0]||{gym:g})||'#8e8e93');return `<div class="gh" style="--gc:${c}"><span class="gd"></span><span style="color:${liftText(c)}">${esc(g)}</span><span class="sub sm">${items.length}</span></div>`+items.map(([x,i])=>agRow(x,cls(x,i),i===ni)).join('')}).join('')}
+let AHEAD=[];
+function peek(){const ahead=new Map();AHEAD.forEach(r=>{if(arr(r.sessions).length)ahead.set(r.date,arr(r.sessions))});
+arr(D.sessions_ahead).forEach(x=>{if(!x||!x.date||ahead.has(x.date)&&!ahead.get(x.date)._sa)return;if(!ahead.has(x.date)){const a=[];a._sa=1;ahead.set(x.date,a)}ahead.get(x.date).push(x)});
+const days=[...ahead.keys()].filter(d=>d>DATE).sort().slice(0,4);
+if(!days.length)return empty('cal','Nothing booked in the next few days yet.');
+return days.map(d=>{const L=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});const ss=ahead.get(d).slice().sort((a,b)=>toMin0(a.time)-toMin0(b.time));
+return `<div class="pk"><div class="pkd">${esc(L)}<span class="sub sm">${ss.length}</span></div><div class="pkl">${ss.map(x=>{const c=dotColor(x);return `<div class="pki" style="--gc:${c}"><span class="gd"></span><span class="tm2">${esc(x.time||'')}</span><span class="pkn" style="color:${nameColor(x)}">${esc(x.name||'')}</span>${gymPill(x)}</div>`}).join('')}</div></div>`}).join('')}
+/* weather (Open-Meteo, no key) */
+function wxIcon(c){return c===0?'sun':c<=2?'psun':c===3?'cloud':c<=48?'fog':c<=67||(c>=80&&c<=82)?'rain':c<=77||c===85||c===86?'snow':c>=95?'bolt':'cloud'}
+const WXT={0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Cloudy',45:'Fog',48:'Fog',51:'Drizzle',53:'Drizzle',55:'Drizzle',61:'Rain',63:'Rain',65:'Heavy rain',71:'Snow',73:'Snow',75:'Heavy snow',80:'Showers',81:'Showers',82:'Heavy showers',95:'Thunderstorms',96:'Thunderstorms',99:'Thunderstorms'};
+async function loadWx(){const el=$('#wx');if(!el)return;let w=null;try{w=JSON.parse(localStorage.getItem('brief-wx')||'null')}catch(x){}
+if(!w||Date.now()-w.t>30*60*1000){try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.459&longitude=-74.361&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=1');if(!r.ok)throw 0;const j=await r.json();
+w={t:Date.now(),c:Math.round(j.current.temperature_2m),code:j.current.weather_code,hi:Math.round(j.daily.temperature_2m_max[0]),lo:Math.round(j.daily.temperature_2m_min[0]),p:j.daily.precipitation_probability_max[0]};localStorage.setItem('brief-wx',JSON.stringify(w))}catch(x){if(!w){el.remove();return}}}
+const e2=$('#wx');if(!e2)return;e2.innerHTML=`<div class="wxi">${svg(wxIcon(w.code))}</div><div class="wxt"><b>${w.c}°</b><span>${WXT[w.code]||''}</span></div><div class="wxr"><span>H ${w.hi}° · L ${w.lo}°</span><span>${svg('drop')}${w.p??0}%</span></div>`;e2.setAttribute('aria-label',`Sayreville weather ${w.c} degrees, high ${w.hi}, low ${w.lo}, ${w.p??0}% chance of rain`);e2.classList.add('ready')}
+/* Sophia */
+const SOPHIA='grokbot://app/v1/agent?id=ae893bb7-8313-4388-8d15-d5d01ec205b6';
+function msgSophia(){let left=false;const h=()=>{if(document.visibilityState==='hidden')left=true};document.addEventListener('visibilitychange',h);location.href=SOPHIA;
+setTimeout(()=>{document.removeEventListener('visibilitychange',h);if(!left&&document.visibilityState==='visible')noteSheet(true)},1600)}
+function sheet(html){if($('.modal'))return null;const m=document.createElement('div');m.className='modal';m.innerHTML=`<form class="sheet"><div class="grab"></div>${html}</form>`;document.body.appendChild(m);requestAnimationFrame(()=>requestAnimationFrame(()=>m.classList.add('in')));
+const close=()=>{m.classList.remove('in');setTimeout(()=>m.remove(),350)};m.onclick=e=>{if(e.target===m)close()};
+const sh=m.querySelector('.sheet');let y0=null,dy=0;sh.addEventListener('touchstart',e=>{if(sh.scrollTop>0)return;y0=e.touches[0].clientY;dy=0},{passive:true});
+sh.addEventListener('touchmove',e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);sh.style.transition='none';sh.style.transform=`translateY(${dy}px)`},{passive:true});
+sh.addEventListener('touchend',()=>{if(y0==null)return;y0=null;sh.style.transition='';sh.style.transform='';if(dy>120)close()});return {m,close}}
+function noteSheet(fallback){const S=sheet(`<h2>Leave Sophia a note</h2><p class="sub" style="margin:2px 0 10px">${fallback===true?'Couldn’t open the Grok Bot app? ':''}She’ll pick it up next time she checks in.</p>
+<div class="group form"><div class="cell"><textarea id="nb_body" rows="4" maxlength="2000" placeholder="What should Sophia know or do?" aria-label="Note for Sophia"></textarea></div></div><div class="err" id="ner"></div>
+<div style="display:flex;gap:8px"><button type="button" class="btn sec press" id="ncx" style="flex:1">Cancel</button><button class="btn press" style="flex:2">Send note</button></div>`);if(!S)return;const {m,close}=S;
+m.querySelector('#ncx').onclick=close;m.querySelector('form').onsubmit=async e=>{e.preventDefault();const body=m.querySelector('#nb_body').value.trim();if(!body){m.querySelector('#ner').textContent='Write a short note first.';return}
+try{await api('/rest/v1/brief_notes',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({body})});m.querySelector('#ner').style.color='#30d158';m.querySelector('#ner').textContent='Sent to Sophia.';setTimeout(close,700)}catch(x){m.querySelector('#ner').textContent='Could not send: '+x.message}}}
+function stagger(){document.querySelectorAll('#pl>*,#pr>*').forEach((el,i)=>{el.style.setProperty('--i',Math.min(i,10));el.classList.add('enter')})}
 function renderTodos(){const h=$('#todos');if(!h)return;const td=arr(D.todos),dn=getDone();if(!td.length){h.innerHTML=`<div class="group">${empty('check','All clear. Nothing carried over.')}</div>`;return}
 const row=(t,i,d)=>`<div class="swbg"><div class="cell todo ${d?'done':''}" data-i="${i}"><button class="cb ${d?'on':''}" aria-label="${d?'Mark not done':'Complete'}"><svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></button><div class="grow">${esc(todoText(t))}${t&&t.from?`<div class="sub sm">from ${esc(t.from)}</div>`:''}</div></div></div>`;
 const open=td.map((t,i)=>[t,i]).filter(x=>!dn.has(x[1])),done=td.map((t,i)=>[t,i]).filter(x=>dn.has(x[1]));
@@ -301,19 +415,17 @@ function refreshTiles(){const t=document.querySelector('[data-go="s-td"] b');if(
 function vOrders(v){const or=arr(D.orders);const od=`<div class="sh"><span>Orders</span><span>${or.length||''}</span></div>${DS('Shipments and orders that need action or are on the way')}`;if(!or.length){v.innerHTML=od+`<div class="group">${empty('box','No orders in flight. New ones show up here.')}</div>`;return}
 v.innerHTML=od+['a','t','d'].map(k=>{const g=or.filter(o=>oStat(o.status)===k);if(!g.length)return'';return `<div class="sh"><span>${OG[k][0]}</span><span>${g.length}</span></div><div class="group">${g.map(o=>`<div class="cell ind"><div class="ic sq" style="background:${k==='a'?'var(--red)':k==='t'?'var(--blue)':'#30d158'}">${svg('box')}</div><div class="grow"><div class="ttl">${esc(o.store)}</div><div><span class="pill ${OG[k][1]}">${esc(o.status||OG[k][0])}</span></div><div class="sub">${esc(o.item)}</div><div class="sub sm">${o.eta?'ETA '+esc(o.eta):''}${safeUrl(o.tracking)?`${o.eta?' · ':''}<a href="${safeUrl(o.tracking)}" target="_blank" rel="noopener">Track</a>`:''}</div></div></div>`).join('')}</div>`}).join('')}
 function vSleep(v){const sl=D.sleep||{},ci=D.checkin;const sd=`<div class="sh"><span>Sleep</span><span>${sl.source?esc(sl.source):''}</span></div>${DS('Last night’s sleep and readiness from Oura')}`;const has=sl.score!=null||sl.hours!=null;
-if(!has){v.innerHTML=sd+`<div class="group">${empty('moon','No sleep data yet.<br>Open the Oura app to sync.')}</div>${ciCard(ci)}`;bindCi();return}
+if(!has){v.innerHTML=sd+`<div class="group">${empty('moon','No sleep data yet.<br>Open the Oura app to sync.')}</div>`;return}
 const sc=Math.max(0,Math.min(100,+sl.score||0)),r=70,c=2*Math.PI*r;const col=sc>=85?'#30d158':sc>=70?'#2fbf71':sc>=60?'#ff9f0a':'#ff453a';
-v.innerHTML=sd+`<div class="group"><div class="ringwrap"><svg class="ring" viewBox="0 0 180 180"><circle cx="90" cy="90" r="${r}" fill="none" stroke="rgba(47,191,113,.18)" stroke-width="18"/><circle cx="90" cy="90" r="${r}" fill="none" stroke="${col}" stroke-width="18" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c}" transform="rotate(-90 90 90)" id="arc" style="transition:stroke-dashoffset 1s ease"/><text x="90" y="92" text-anchor="middle" font-size="44" font-weight="700">${sl.score!=null?esc(sl.score):'—'}</text><text x="90" y="118" text-anchor="middle" font-size="13" fill="rgba(235,235,245,.6)">SLEEP SCORE</text></svg>${sl.source?`<div class="sub sm">from ${esc(sl.source)}</div>`:''}</div></div>
-<div class="sh"><span>Details</span></div><div class="group"><div class="cell"><div class="grow">Time asleep</div><div class="sub">${sl.hours!=null?esc(sl.hours)+' h':'—'}</div></div><div class="cell"><div class="grow">Score</div><div class="sub">${sl.score!=null?esc(sl.score):'—'}</div></div><div class="cell"><div class="grow">How you felt</div><div class="sub">${ci?esc(ci.sleep_quality)+' / 5':'—'}</div></div>${sl.notes?`<div class="cell"><div class="grow sub">${esc(sl.notes)}</div></div>`:''}</div>${ciCard(ci)}`;
-requestAnimationFrame(()=>setTimeout(()=>{const a=$('#arc');if(a)a.style.strokeDashoffset=c*(1-sc/100)},50));bindCi()}
-function ciCard(ci){return `<div class="sh"><span>Morning check-in</span></div>${DS('Your quick morning check-in')}<div class="group">${ci?`<div class="cell"><div class="grow">Sleep quality</div><div class="sub">${esc(ci.sleep_quality)} / 5</div></div><div class="cell"><div class="grow">Energy</div><div class="sub">${esc(ci.energy)} / 5</div></div><div class="cell"><div class="grow">Mood</div><div class="sub">${esc(ci.mood||'—')}</div></div><div class="cell"><div class="grow">Soreness</div><div class="sub">${esc(ci.soreness||'—')}</div></div>${ci.note?`<div class="cell"><div class="grow sub">${esc(ci.note)}</div></div>`:''}`:`<div class="cell press" id="ciopen"><div class="ic sq" style="background:var(--accent)">${svg('heart')}</div><div class="grow ttl">Do check-in</div><span class="chev2">›</span></div>`}</div>`}
-function bindCi(){const b=$('#ciopen');if(b)b.onclick=()=>checkin(DATE)}
-function vMore(v){v.innerHTML=`<div class="sh" style="margin-top:0"><span>Morning check-in</span></div>${DS('Your quick morning check-in')}<div class="group">${ciCard(D.checkin).replace(/^.*?<div class="group">/s,'').replace(/<\/div>$/,'')}</div>
+v.innerHTML=sd+`<div class="group"><div class="ringwrap"><svg class="ring" viewBox="0 0 180 180"><circle cx="90" cy="90" r="${r}" fill="none" stroke="rgba(47,191,113,.18)" stroke-width="18"/><circle cx="90" cy="90" r="${r}" fill="none" stroke="${col}" stroke-width="18" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c}" transform="rotate(-90 90 90)" id="arc" style="transition:stroke-dashoffset 1s ease"/><g class="planet" id="planet" style="transform:rotate(0deg)"><circle cx="90" cy="20" r="7" fill="${col}" stroke="#000" stroke-width="2"/></g><text x="90" y="92" text-anchor="middle" font-size="44" font-weight="700">${sl.score!=null?esc(sl.score):'—'}</text><text x="90" y="118" text-anchor="middle" font-size="13" fill="rgba(235,235,245,.6)">SLEEP SCORE</text></svg>${sl.source?`<div class="sub sm">from ${esc(sl.source)}</div>`:''}</div></div>
+<div class="sh"><span>Details</span></div><div class="group"><div class="cell"><div class="grow">Time asleep</div><div class="sub">${sl.hours!=null?esc(sl.hours)+' h':'—'}</div></div><div class="cell"><div class="grow">Score</div><div class="sub">${sl.score!=null?esc(sl.score):'—'}</div></div>${sl.notes?`<div class="cell"><div class="grow sub">${esc(sl.notes)}</div></div>`:''}</div>`;
+requestAnimationFrame(()=>setTimeout(()=>{const a=$('#arc');if(a)a.style.strokeDashoffset=c*(1-sc/100);const pl=$('#planet');if(pl)pl.style.transform=`rotate(${sc*3.6}deg)`},50))}
+function vMore(v){v.innerHTML=`<div class="sh" style="margin-top:0"><span>Sophia</span></div>${DS('Message Sophia or leave her a note')}<div class="group"><div class="cell ind press" id="msgS2"><div class="ic sq" style="background:var(--accent)">${svg('chat')}</div><div class="grow">Message Sophia</div><span class="chev2">›</span></div><div class="cell ind press" id="noteS"><div class="ic sq" style="background:#5e5ce6">${svg('note')}</div><div class="grow">Leave Sophia a note</div><span class="chev2">›</span></div></div>
 <div class="sh"><span>Account</span></div><div class="group"><div class="cell ind press" id="cp"><div class="ic sq" style="background:#8e8e93">${svg('key')}</div><div class="grow">Change password</div><span class="chev2">›</span></div>
 <div class="cell ind press" id="lo"><div class="ic sq" style="background:var(--red)">${svg('out')}</div><div class="grow red">Sign out</div></div></div>
 <p class="sub sm" style="text-align:center;margin-top:24px">The Brief · for Krishna</p><p class="sub sm" id="build" style="text-align:center;margin-top:4px">Build v${BUILD}</p>`;
-bindCi();$('#cp').onclick=()=>renderNewPassword(false);$('#lo').onclick=logout}
-function checkin(date){if($('.modal'))return;const v={sleep_quality:0,energy:0};const m=document.createElement('div');m.className='modal';
+$('#msgS2').onclick=msgSophia;$('#noteS').onclick=noteSheet;$('#cp').onclick=()=>renderNewPassword(false);$('#lo').onclick=logout}
+function checkin(date){if($('.modal'))return;const P=D.checkin||{};const v={sleep_quality:+P.sleep_quality||0,energy:+P.energy||0};const m=document.createElement('div');m.className='modal';
 const sc=k=>`<div class="scale" data-k="${k}">${[1,2,3,4,5].map(n=>`<button type="button" class="press" data-n="${n}">${n}</button>`).join('')}</div>`;
 m.innerHTML=`<form class="sheet" id="cf"><div class="grab"></div><h2>Morning check-in</h2><p class="sub" style="margin:2px 0 6px">Takes 20 seconds.</p>
 <div class="lbl">Sleep quality (1–5)</div><div class="group">${sc('sleep_quality')}</div><div class="lbl">Energy (1–5)</div><div class="group">${sc('energy')}</div>
@@ -321,7 +433,7 @@ m.innerHTML=`<form class="sheet" id="cf"><div class="grab"></div><h2>Morning che
 <div class="cell"><input id="sore" placeholder="Soreness, e.g. legs a bit tight" aria-label="Soreness"></div>
 <div class="cell"><textarea id="note" rows="2" placeholder="One note" aria-label="Note"></textarea></div></div>
 <div class="err" id="cer"></div><div style="display:flex;gap:8px"><button type="button" class="btn sec press" id="later" style="flex:1">Later</button><button class="btn press" style="flex:2">Save</button></div></form>`;
-document.body.appendChild(m);requestAnimationFrame(()=>requestAnimationFrame(()=>m.classList.add('in')));
+document.body.appendChild(m);m.querySelectorAll('.scale').forEach(sc=>{const n=v[sc.dataset.k];sc.querySelectorAll('button').forEach(x=>x.classList.toggle('on',+x.dataset.n===n))});m.querySelector('#mood').value=P.mood||'';m.querySelector('#sore').value=P.soreness||'';m.querySelector('#note').value=P.note||'';requestAnimationFrame(()=>requestAnimationFrame(()=>m.classList.add('in')));
 const close=()=>{m.classList.remove('in');setTimeout(()=>m.remove(),300)};
 m.onclick=e=>{if(e.target===m)close()};
 const sh=m.querySelector('.sheet'),gb=m.querySelector('.grab');let y0=null,dy=0;
@@ -332,7 +444,7 @@ m.querySelectorAll('.scale').forEach(s=>s.onclick=e=>{const n=e.target.dataset.n
 m.querySelector('#later').onclick=close;
 m.querySelector('#cf').onsubmit=async e=>{e.preventDefault();if(!v.sleep_quality||!v.energy){m.querySelector('#cer').textContent='Pick sleep quality and energy.';return}
 try{await api('/rest/v1/rpc/brief_save_checkin',{method:'POST',body:JSON.stringify({p_date:date,p_data:{...v,mood:m.querySelector('#mood').value,soreness:m.querySelector('#sore').value.trim(),note:m.querySelector('#note').value.trim()}})});close();await fetchDay();shell()}catch(x){m.querySelector('#cer').textContent=x.message}}}
-async function fetchDay(){DATE=today();const rows=await api('/rest/v1/brief_days?date=eq.'+DATE+'&select=*');D=rows[0]||{}}
+async function fetchDay(){DATE=today();const end=new Date(Date.parse(DATE+'T12:00:00Z')+5*864e5).toISOString().slice(0,10);const [rows,ah]=await Promise.all([api('/rest/v1/brief_days?date=eq.'+DATE+'&select=*'),api('/rest/v1/brief_days?date=gt.'+DATE+'&date=lte.'+end+'&select=date,sessions&order=date').catch(()=>[])]);D=rows[0]||{};AHEAD=ah||[]}
 async function load(){if(!sess)return renderLogin();app.innerHTML='<p class="sub" style="margin-top:40vh;text-align:center">Loading…</p>';
 try{const own=await api('/rest/v1/brief_owners?select=user_id');if(!own.length){logout();return renderLogin('This account is not allowed.')}
 await fetchDay();shell();if(!D.checkin&&localStorage.getItem('brief-ci-shown')!==DATE){localStorage.setItem('brief-ci-shown',DATE);setTimeout(()=>checkin(DATE),400)}}
