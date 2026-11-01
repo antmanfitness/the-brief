@@ -88,6 +88,107 @@ input,textarea,select{width:100%;background:transparent;color:var(--text);border
 .sheet h2{font-size:22px;margin:4px 0 0}
 .sheet .group{background:var(--card2)}.sheet .scale button{background:#3a3a3c}
 .hide{display:none!important}
+
+/* ===== iOS 27 Liquid Glass layer ===== */
+:root{--glass:rgba(34,36,38,.64);--glass-strong:rgba(28,30,31,.72);--blur:blur(28px) saturate(190%);
+--spec:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 0 .5px rgba(255,255,255,.14);
+--edge:0 0 0 .5px rgba(0,0,0,.65),0 10px 30px rgba(0,0,0,.45);--r-card:22px;--pad:14px}
+body{background:radial-gradient(120% 60% at 15% -10%,rgba(47,191,113,.22),transparent 60%),radial-gradient(90% 50% at 110% 30%,rgba(47,191,113,.10),transparent 60%),#000;background-attachment:fixed;min-height:100vh}
+.glass,.group,.tile,.sheet,.tabs,.navbar{background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:var(--spec),var(--edge)}
+.group,.tile{border-radius:var(--r-card)}
+.tile{padding:var(--pad)}
+/* concentric: inner radius = outer - padding */
+.tile .ic{border-radius:calc(var(--r-card) - var(--pad))}
+.ic.sq{border-radius:9px}
+.cell.ind .ic{border-radius:50%}
+.hl{padding:12px 18px}
+.hl .k{font-size:12px;letter-spacing:.2px;text-transform:uppercase}
+.sh{margin:22px 18px 8px}
+.lt h1{font-size:34px;font-weight:800;letter-spacing:.2px}
+/* scroll-edge effect instead of a hard bar */
+.navbar{background:linear-gradient(to bottom,rgba(0,0,0,.75),rgba(0,0,0,.35) 70%,transparent);box-shadow:none;border:0!important;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent);height:calc(env(safe-area-inset-top) + 56px)}
+/* floating capsule tab bar */
+.tabs{left:50%;right:auto;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 10px);width:min(360px,calc(100% - 32px));border-radius:999px;border:0;padding:6px;gap:2px;transition:width .35s cubic-bezier(.2,.9,.3,1),padding .3s}
+.tabs button{border-radius:999px;padding:6px 0 5px;transition:background .25s,color .2s,transform .12s}
+.tabs button:active{transform:scale(.94)}
+.tabs button.on{background:rgba(47,191,113,.18);box-shadow:inset 0 0 0 .5px rgba(95,216,149,.35)}
+.tabs.min{width:64px}.tabs.min button:not(.on){display:none}.tabs.min button span{display:none}.tabs.min button{padding:9px 0}
+.wrap{padding-bottom:calc(env(safe-area-inset-bottom) + 110px)}
+/* buttons: capsules */
+.btn,button.btn{border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 18px rgba(47,191,113,.28)}
+.btn.sec{background:rgba(120,120,128,.24);box-shadow:var(--spec)}
+.scale button{border-radius:999px;background:rgba(120,120,128,.2)!important;box-shadow:var(--spec)}
+.scale button.on{background:var(--accent)!important;color:#03140a}
+.pill{border-radius:999px}
+.cb{width:26px;height:26px}
+/* timeline */
+.ag .bar{width:3px}
+.ag.next{background:linear-gradient(90deg,rgba(47,191,113,.22),rgba(47,191,113,.06));box-shadow:inset 0 0 0 .5px rgba(95,216,149,.3);border-radius:16px;margin:4px 6px}
+.ag.next::before,.ag.next+.ag::before{display:none}
+.ag .dotn{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(47,191,113,.25);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(47,191,113,.08)}}
+/* ring glow */
+.ring{filter:drop-shadow(0 0 18px rgba(47,191,113,.35))}
+/* empty state glyph in glass bubble */
+.empty .eg{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(120,120,128,.16);box-shadow:var(--spec)}
+.empty .eg svg{stroke:var(--accent2);opacity:.8}
+/* sheet */
+.sheet{background:var(--glass-strong);border-radius:34px 34px 0 0;padding-left:18px;padding-right:18px}
+.sheet .group{background:rgba(120,120,128,.14);box-shadow:var(--spec)}
+.modal.in{background:rgba(0,0,0,.35)}
+/* login */
+.login .group{border-radius:24px}
+.login .group .cell{padding:2px 4px}
+.login h1{font-weight:800}
+.banner{border-radius:999px}
+/* toggle (iOS 27 style, used where needed) */
+.tg{appearance:none;width:52px;height:32px;border-radius:999px;background:rgba(120,120,128,.32);position:relative;transition:background .25s;flex:none;cursor:pointer;padding:0;border:0}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.3,1.4,.5,1),width .2s}
+.tg:active::after{width:34px}.tg.on{background:var(--accent)}.tg.on::after{transform:translateX(20px)}.tg.on:active::after{transform:translateX(14px)}
+/* narrow: summary pane only on Today */
+main:not(.tab-today) .paneL{display:none}
+.paneL>.sh.big:first-child{margin-top:0}
+/* Accessibility: Reduce Transparency */
+@media (prefers-reduced-transparency: reduce){
+ body{background:#000}
+ .glass,.group,.tile,.sheet,.tabs,.navbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ .group,.tile{background:#1c1c1e}.sheet{background:#1c1c1e}.tabs{background:#1c1c1e}.navbar{background:#000;-webkit-mask-image:none;mask-image:none}
+ .sheet .group{background:#2c2c2e}
+}
+/* Accessibility: Increase Contrast */
+@media (prefers-contrast: more){
+ :root{--muted:rgba(235,235,245,.85);--muted2:rgba(235,235,245,.6);--sep:rgba(235,235,245,.45)}
+ .group,.tile,.sheet,.tabs{box-shadow:0 0 0 1px rgba(255,255,255,.55)!important;background:#111}
+ .tabs button{color:#d1d1d6}.tabs button.on{color:#5fd895;background:rgba(47,191,113,.3)}
+ .btn{box-shadow:0 0 0 1px #fff!important}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+/* ===== iPhone Duo open / wide: two panes ===== */
+@media (min-width:700px),(horizontal-viewport-segments:2){
+ .wrap{max-width:1180px;padding:0 24px 48px}
+ .navbar{display:none}
+ .lt{padding-top:calc(env(safe-area-inset-top) + 76px)}
+ .tabs{top:calc(env(safe-area-inset-top) + 10px);bottom:auto;width:auto;min-width:380px;max-width:520px}
+ .tabs button{flex-direction:row;gap:6px;padding:8px 16px;font-size:14px}.tabs svg{width:20px;height:20px}
+ .tabs.min{width:auto}.tabs.min button:not(.on){display:flex}.tabs.min button span{display:inline}.tabs.min button{padding:8px 16px}
+ #view{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:40px;align-items:start}
+ main:not(.tab-today) .paneL{display:block}
+ .paneL{position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto;scrollbar-width:none}
+ .paneL,.paneR{max-width:560px;width:100%;justify-self:center}
+ .paneR>.sh:first-child{margin-top:0}
+ .modal{align-items:center}
+ .sheet{max-width:560px;border-radius:34px;padding-bottom:22px;max-height:88vh}
+ .login{max-width:440px;padding-top:14vh}
+}
+/* true dual-segment: align panes to segments so nothing straddles the hinge */
+@media (horizontal-viewport-segments:2){
+ .wrap{max-width:none;padding:0}
+ #view{grid-template-columns:env(viewport-segment-width 0 0) env(viewport-segment-width 1 0);column-gap:calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0))}
+ .paneL,.paneR{padding:0 20px;max-width:none}
+ .lt{padding-left:20px;width:env(viewport-segment-width 0 0)}
+ .tabs{left:env(viewport-segment-left 1 0);transform:translateX(16px)}
+ .modal{justify-content:flex-start}.sheet{margin-left:calc(env(viewport-segment-left 1 0) + (env(viewport-segment-width 1 0) - min(560px,env(viewport-segment-width 1 0)))/2)}
+}
 </style></head><body><div id="app"></div>
 <script>
 const SB='https://bvbcydanngfzemnnbuxa.supabase.co',KEY='sb_publishable_6ty7ZiomiqfHSr8HT07-sQ_2gMLSkZe';
@@ -124,7 +225,7 @@ function recoveryFromHash(){const h=new URLSearchParams(location.hash.slice(1));
 const j={access_token:h.get('access_token'),refresh_token:h.get('refresh_token'),expires_in:+h.get('expires_in')||3600};j.exp=Date.now()+j.expires_in*1000;sess=j;localStorage.setItem('brief-sess',JSON.stringify(j));history.replaceState(null,'',location.pathname+location.search);renderNewPassword(true);return true}
 
 const arr=v=>Array.isArray(v)?v:(v?[v]:[]);
-const empty=(ic,t)=>`<div class="empty">${svg(ic)}<div>${t}</div></div>`;
+const empty=(ic,t)=>`<div class="empty"><div class="eg">${svg(ic)}</div><div>${t}</div></div>`;
 const etTime=d=>new Date(d).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'});
 function nowMin(){const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'numeric',hour12:false}).formatToParts(new Date());const g=t=>+p.find(x=>x.type===t).value;return (g('hour')%24)*60+g('minute')}
 const WD=['sun','mon','tue','wed','thu','fri','sat'];function toMin(t){let str=String(t||'').trim(),off=0;const w=str.match(/^(sun|mon|tue|wed|thu|fri|sat)[a-z]*\.?,?\s*/i);if(w){const td=WD.indexOf(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short'}).format(new Date()).slice(0,3).toLowerCase());off=((WD.indexOf(w[1].toLowerCase())-td+7)%7)*1440;str=str.slice(w[0].length)}const r=toMin0(str);return r>=9999?9999+off:r+off}
@@ -141,11 +242,11 @@ function shell(){document.body.classList.add('shell');
 const upd=D.updated_at?'Last updated '+etTime(D.updated_at):'Not updated yet today';
 const title=TABS.find(t=>t[0]===TAB)[1];
 app.innerHTML=`<div class="navbar" id="nb"><div class="nt">${title}</div></div><div class="wrap" id="wr"><div class="ptr" id="ptr"><div class="sp"></div><span id="ptrt">Pull to refresh</span></div>
-<div class="lt"><h1 id="lt">${title}</h1><div class="upd">${esc(upd)}</div></div>${D.is_example?'<div class="banner">EXAMPLE DATA — not real.</div>':''}<main id="view"></main></div>
+<div class="lt"><h1 id="lt">${title}</h1><div class="upd">${esc(upd)}</div></div>${D.is_example?'<div class="banner">EXAMPLE DATA — not real.</div>':''}<main id="view" class="tab-${TAB}"><div class="paneL" id="pl"></div><div class="paneR" id="pr"></div></main></div>
 <nav class="tabs">${TABS.map(t=>`<button class="${t[0]===TAB?'on':''}" data-t="${t[0]}" aria-label="${t[1]}">${svg(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>`;
-app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;localStorage.setItem('brief-tab',TAB);shell();scrollTo(0,0)});
-({today:vToday,orders:vOrders,sleep:vSleep,more:vMore})[TAB]($('#view'));onScroll()}
-function onScroll(){const nb=$('#nb'),lt=$('#lt');if(!nb)return;const y=scrollY;nb.classList.toggle('sm',y>38);if(lt){const s=y<0?Math.min(1.12,1-y/400):Math.max(.8,1-y/200);lt.style.transform=`scale(${s})`;lt.style.opacity=y>45?0:1}}
+app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{const tb=$('.tabs');if(tb.classList.contains('min')&&b.dataset.t===TAB){tb.classList.remove('min');return}TAB=b.dataset.t;localStorage.setItem('brief-tab',TAB);shell();scrollTo(0,0)});
+vSummary($('#pl'));({today:vToday,orders:vOrders,sleep:vSleep,more:vMore})[TAB]($('#pr'));onScroll()}
+let lastY=0;function onScroll(){const nb=$('#nb'),lt=$('#lt');if(!nb)return;const y=scrollY;const tb=$('.tabs');if(tb){if(y>lastY+6&&y>80)tb.classList.add('min');else if(y<lastY-6||y<40)tb.classList.remove('min');}lastY=y;nb.classList.toggle('sm',y>38);if(lt){const s=y<0?Math.min(1.12,1-y/400):Math.max(.8,1-y/200);lt.style.transform=`scale(${s})`;lt.style.opacity=y>45?0:1}}
 addEventListener('scroll',onScroll,{passive:true});
 // pull to refresh
 let ptrY=null,ptrD=0;addEventListener('touchstart',e=>{ptrY=(scrollY<=0&&$('#ptr')&&!$('.modal'))?e.touches[0].clientY:null;ptrD=0},{passive:true});
@@ -159,21 +260,22 @@ return [['mail','var(--blue)','Emails',em.length?`${em.length} need${em.length==
 ['box','var(--orange)','Orders',or.length?(na?`${na} need${na===1?'s':''} action. `:'')+(tr?`${tr} in transit.`:'')||'All delivered.':'No orders in flight.'],
 ['moon','var(--purple)','Sleep',sl.score!=null||sl.hours!=null?`${sl.hours!=null?esc(sl.hours)+' h':''}${sl.score!=null?' · score '+esc(sl.score):''}${D.checkin?' · felt '+esc(D.checkin.sleep_quality)+'/5':''}`:'No sleep data yet.']]
 .map(h=>`<div class="hl cell"><div class="grow"><div class="k" style="color:${h[1]}">${svg(h[0])}${h[2]}</div><div>${h[3]}</div></div></div>`).join('')}
-function vToday(v){const em=arr(D.emails),se=arr(D.sessions),td=arr(D.todos),or=arr(D.orders);
+function vSummary(v){const em=arr(D.emails),se=arr(D.sessions),td=arr(D.todos),or=arr(D.orders);
 const tiles=[['s-em','mail','var(--blue)','Emails',em.length],['s-se','cal','var(--red)','Sessions',se.length],['s-td','check','var(--accent)','To-dos',td.length-[...getDone()].filter(i=>i<td.length).length],['s-or','box','var(--orange)','Orders',or.length]];
 v.innerHTML=`<div class="tiles">${tiles.map(t=>`<div class="tile press" data-go="${t[0]}" role="button"><div class="top"><div class="ic" style="background:${t[2]}">${svg(t[1])}</div><b>${t[4]}</b></div><span>${t[3]}</span></div>`).join('')}</div>
 ${D.checkin?'':`<div class="group press" style="margin-top:10px" id="cibar"><div class="cell"><div class="ic sq" style="background:var(--accent)">${svg('heart')}</div><div class="grow"><div class="ttl">Morning check-in</div><div class="sub sm">Takes 20 seconds</div></div><span class="chev2">›</span></div></div>`}
 <div class="sh big">Highlights</div><div class="group">${highlights()}</div>
-<div class="sh" id="s-td"><span>To-dos</span></div><div id="todos"></div>
+`;
+v.querySelectorAll('[data-go]').forEach(t=>t.onclick=()=>{const go=()=>{const el=$('#'+t.dataset.go);if(el)scrollTo({top:el.getBoundingClientRect().top+scrollY-70,behavior:'smooth'})};if(TAB!=='today'){TAB='today';localStorage.setItem('brief-tab',TAB);shell();setTimeout(go,50)}else go()});
+if($('#cibar'))$('#cibar').onclick=()=>checkin(DATE)}
+function vToday(v){const em=arr(D.emails),se=arr(D.sessions),td=arr(D.todos),or=arr(D.orders);v.innerHTML=`<div class="sh" id="s-td"><span>To-dos</span></div><div id="todos"></div>
 <div class="sh" id="s-se"><span>Sessions</span><span>${se.length||''}</span></div><div class="group">${agenda(se)}</div>
 <div class="sh" id="s-em"><span>Important emails</span><span>${em.length||''}</span></div><div class="group">${em.length?em.map(e=>`<div class="cell ind"><div class="ic" style="background:var(--blue)">${svg('mail')}</div><div class="grow"><div class="ttl">${esc(e.sender)}</div><div>${safeUrl(e.link)?`<a href="${safeUrl(e.link)}" target="_blank" rel="noopener">${esc(e.subject)}</a>`:esc(e.subject)}</div>${e.why?`<div class="sub sm">${esc(e.why)}</div>`:''}</div></div>`).join(''):empty('mail','Inbox is calm. Nothing urgent.')}</div>
 <div class="sh" id="s-or"><span>Orders</span><span>${or.length||''}</span></div><div class="group press" id="toor"><div class="cell"><div class="grow">${or.length?`${or.length} order${or.length>1?'s':''} — see Orders tab`:'No orders in flight'}</div><span class="chev2">›</span></div></div>`;
-v.querySelectorAll('[data-go]').forEach(t=>t.onclick=()=>{const el=$('#'+t.dataset.go);if(el)scrollTo({top:el.getBoundingClientRect().top+scrollY-60,behavior:'smooth'})});
 $('#toor').onclick=()=>{TAB='orders';localStorage.setItem('brief-tab',TAB);shell();scrollTo(0,0)};
-if($('#cibar'))$('#cibar').onclick=()=>checkin(DATE);
 renderTodos()}
 function agenda(se){if(!se.length)return empty('cal','No sessions booked today. Enjoy the space.');const s=se.slice().sort((a,b)=>toMin(a.time)-toMin(b.time)),n=nowMin();const ni=s.findIndex(x=>toMin(x.time)>=n);
-return s.map((x,i)=>`<div class="ag ${i===ni?'next':(ni===-1||i<ni)&&toMin(x.time)<9999?'past':''}"><div class="tm">${esc(x.time)}</div><div class="bar"></div><div class="grow">${i===ni?'<div class="nu">Next up</div>':''}<div class="ttl">${esc(x.name)}</div>${x.type||x.note?`<div class="sub sm">${esc(x.type||x.note)}</div>`:''}</div></div>`).join('')}
+return s.map((x,i)=>`<div class="ag ${i===ni?'next':(ni===-1||i<ni)&&toMin(x.time)<9999?'past':''}"><div class="tm">${esc(x.time)}</div><div class="bar"></div><div class="grow">${i===ni?'<div class="nu" style="display:flex;align-items:center;gap:6px"><span class="dotn"></span>Next up</div>':''}<div class="ttl">${esc(x.name)}</div>${x.type||x.note?`<div class="sub sm">${esc(x.type||x.note)}</div>`:''}</div></div>`).join('')}
 function renderTodos(){const h=$('#todos');if(!h)return;const td=arr(D.todos),dn=getDone();if(!td.length){h.innerHTML=`<div class="group">${empty('check','All clear. Nothing carried over.')}</div>`;return}
 const row=(t,i,d)=>`<div class="swbg"><div class="cell todo ${d?'done':''}" data-i="${i}"><button class="cb ${d?'on':''}" aria-label="${d?'Mark not done':'Complete'}"><svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></button><div class="grow">${esc(todoText(t))}${t&&t.from?`<div class="sub sm">from ${esc(t.from)}</div>`:''}</div></div></div>`;
 const open=td.map((t,i)=>[t,i]).filter(x=>!dn.has(x[1])),done=td.map((t,i)=>[t,i]).filter(x=>dn.has(x[1]));
