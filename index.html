@@ -29,6 +29,7 @@ label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
 .scale button.on{background:var(--accent);color:#03140a;border-color:var(--accent)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center;z-index:9}
 .sheet{background:var(--card);border:1px solid var(--line);border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px)}
+.pat{max-width:300px;margin:4px auto}.pat svg{width:100%;display:block;user-select:none;-webkit-user-select:none}.dot{fill:var(--card2);stroke:var(--muted);stroke-width:2}.dot.on{fill:var(--accent);stroke:var(--live)}.pl{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
 .empty{color:var(--muted);font-size:13px}.hide{display:none!important}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
@@ -42,17 +43,42 @@ async function auth(body,grant){const r=await fetch(SB+'/auth/v1/token?grant_typ
 async function tok(){if(sess&&Date.now()>sess.exp-60000){try{await auth({refresh_token:sess.refresh_token},'refresh_token')}catch(e){logout();throw e}}return sess.access_token}
 async function api(path,opt={}){const t=await tok();const r=await fetch(SB+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+t,'Content-Type':'application/json',...(opt.headers||{})}});if(r.status===401){logout();throw new Error('Session expired')}const j=await r.json().catch(()=>null);if(!r.ok)throw new Error((j&&j.message)||'Request failed');return j}
 function logout(){sess=null;localStorage.removeItem('brief-sess');renderLogin()}
+const mapUser=v=>{const u=v.trim().toLowerCase();return u==='krishna'?'antmanfitness@gmail.com':(u.includes('@')?u:null)};
+const derive=seq=>'brief-pattern:'+seq.join('-');
+function patternPad(host,onDone){host.innerHTML='<div class="pat"><svg viewBox="0 0 300 300"></svg></div>';const svg=host.querySelector('svg'),NS='http://www.w3.org/2000/svg',P=[];
+for(let i=0;i<9;i++){P.push([50+(i%3)*100,50+Math.floor(i/3)*100]);const c=document.createElementNS(NS,'circle');c.setAttribute('cx',P[i][0]);c.setAttribute('cy',P[i][1]);c.setAttribute('r',14);c.setAttribute('class','dot');c.dataset.i=i;svg.appendChild(c)}
+const pl=document.createElementNS(NS,'polyline');pl.setAttribute('class','pl');svg.insertBefore(pl,svg.firstChild);
+let seq=[],down=false,cur=null;const pt=e=>{const r=svg.getBoundingClientRect();return[(e.clientX-r.left)*300/r.width,(e.clientY-r.top)*300/r.height]};
+const draw=()=>{pl.setAttribute('points',seq.map(i=>P[i].join(',')).concat(cur&&down?[cur.join(',')]:[]).join(' '));svg.querySelectorAll('.dot').forEach(d=>d.classList.toggle('on',seq.includes(+d.dataset.i)))};
+const hit=([x,y])=>{for(let i=0;i<9;i++)if(!seq.includes(i)&&Math.hypot(x-P[i][0],y-P[i][1])<34){const l=seq[seq.length-1];if(l!=null){const m=(l+i)/2;if(Number.isInteger(m)&&(l%3+i%3)%2===0&&(Math.floor(l/3)+Math.floor(i/3))%2===0&&!seq.includes(m))seq.push(m)}seq.push(i)}};
+svg.style.touchAction='none';
+svg.addEventListener('pointerdown',e=>{e.preventDefault();svg.setPointerCapture(e.pointerId);down=true;seq=[];cur=pt(e);hit(cur);draw()});
+svg.addEventListener('pointermove',e=>{if(!down)return;cur=pt(e);hit(cur);draw()});
+const up=()=>{if(!down)return;down=false;draw();const s=seq.map(i=>i+1);onDone(s,()=>{seq=[];draw()})};
+svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up)}
 function renderLogin(msg=''){app.innerHTML=`<div class="login"><h1>The <b>Brief</b></h1><p class="sub">Your morning, on one screen.</p>
-<form id="lf" class="card"><label>Email</label><input id="em" type="email" autocomplete="username" required>
-<label>Password</label><input id="pw" type="password" autocomplete="current-password" required>
-<button style="width:100%;margin-top:14px">Sign in</button><div class="err" id="er">${esc(msg)}</div></form></div>`;
-$('#lf').onsubmit=async e=>{e.preventDefault();$('#er').textContent='';try{await auth({email:$('#em').value.trim(),password:$('#pw').value},'password');load()}catch(x){$('#er').textContent=x.message}}}
+<form id="lf" class="card"><label for="em">Username</label><input id="em" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+<div id="pwrap"><label>Draw your pattern</label><div id="pad"></div></div>
+<div id="tw" class="hide"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><button style="width:100%;margin-top:14px">Sign in</button></div>
+<div class="err" id="er">${esc(msg)}</div><a href="#" id="tg" class="m">Use password instead</a></form></div>`;
+const fail=()=>{$('#er').textContent='Wrong username or password'};
+const go=async(pw,viaPw)=>{$('#er').textContent='';const email=mapUser($('#em').value);if(!email)return fail();try{const j=await auth({email,password:pw},'password');if(viaPw&&!(j.user&&j.user.user_metadata&&j.user.user_metadata.pattern_set))return renderSetPattern(true);load()}catch(x){fail()}};
+patternPad($('#pad'),(s,reset)=>{reset();if(s.length<4){$('#er').textContent='Connect at least 4 dots';return}go(derive(s),false)});
+$('#tg').onclick=e=>{e.preventDefault();const t=$('#tw').classList.toggle('hide');$('#pwrap').classList.toggle('hide',!t);$('#tg').textContent=t?'Use password instead':'Use pattern instead';if(!t)$('#pw').focus()};
+$('#lf').onsubmit=e=>{e.preventDefault();if(!$('#tw').classList.contains('hide'))go($('#pw').value,true)}}
+function renderSetPattern(first){let one=null;app.innerHTML=`<div class="login"><h1>${first?'Set your pattern':'Change pattern'}</h1><p class="sub" id="ph">Connect at least 4 dots.</p><div class="card"><div id="pad"></div><div class="err" id="er"></div>
+<button class="ghost" id="sk" style="width:100%;margin-top:8px">${first?'Skip for now':'Cancel'}</button></div></div>`;
+$('#sk').onclick=()=>load();
+patternPad($('#pad'),async(s,reset)=>{reset();$('#er').textContent='';if(s.length<4){$('#er').textContent='Connect at least 4 dots';return}
+if(!one){one=s.join('-');$('#ph').textContent='Draw it again to confirm.';return}
+if(one!==s.join('-')){one=null;$('#ph').textContent='Didn’t match. Start over — connect at least 4 dots.';return}
+try{await api('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:derive(s),data:{pattern_set:true}})});$('#ph').textContent='Pattern saved.';setTimeout(load,700)}catch(x){one=null;$('#er').textContent='Could not save: '+x.message}})}
 const arr=v=>Array.isArray(v)?v:(v?[v]:[]);
 function statusPill(s){s=String(s||'');const l=s.toLowerCase();const c=/deliver/.test(l)?'':/(delay|exception|fail|return)/.test(l)?'red':'amber';return `<span class="pill ${c}">${esc(s||'—')}</span>`}
 function block(title,count,inner){return `<section class="card"><h2>${title}<span>${count??''}</span></h2>${inner}</section>`}
 function render(d,date){const em=arr(d.emails),se=arr(d.sessions),td=arr(d.todos),or=arr(d.orders),sl=d.sleep||{},ci=d.checkin;
 const nice=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-app.innerHTML=`<header><div><h1>The <b>Brief</b></h1><div class="sub">${esc(nice)}</div></div><button class="ghost" id="lo">Sign out</button></header>
+app.innerHTML=`<header><div><h1>The <b>Brief</b></h1><div class="sub">${esc(nice)}</div></div><div style="display:flex;gap:6px"><button class="ghost" id="cp">Change pattern</button><button class="ghost" id="lo">Sign out</button></div></header>
 ${d.is_example?'<div class="banner">EXAMPLE DATA — not real. Sophia will replace this.</div>':''}
 ${block('Important emails',em.length,em.length?em.map(e=>`<div class="row"><div class="t">${esc(e.sender)}</div><div>${safeUrl(e.link)?`<a href="${safeUrl(e.link)}" target="_blank" rel="noopener">${esc(e.subject)}</a>`:esc(e.subject)}</div><div class="m">${esc(e.why)}</div></div>`).join(''):'<div class="empty">Nothing urgent.</div>')}
 ${block('Clients today',se.length,se.length?se.map(s=>`<div class="row ses"><div class="time">${esc(s.time)}</div><div class="t">${esc(s.name)}</div></div>`).join(''):'<div class="empty">No sessions booked.</div>')}
@@ -60,7 +86,7 @@ ${block('To-dos carried over',td.length,td.length?td.map(t=>`<div class="row"><d
 ${block('Orders',or.length,or.length?or.map(o=>`<div class="row"><div style="display:flex;justify-content:space-between;gap:8px"><div class="t">${esc(o.store)}</div>${statusPill(o.status)}</div><div>${esc(o.item)}</div><div class="m">${o.eta?'ETA '+esc(o.eta):''}${safeUrl(o.tracking)?` · <a href="${safeUrl(o.tracking)}" target="_blank" rel="noopener">Track</a>`:''}</div></div>`).join(''):'<div class="empty">No orders in flight.</div>')}
 ${block('Sleep / overnight',sl.source?esc(sl.source):'',Object.keys(sl).length?`<div class="grid"><div class="stat"><b>${esc(sl.hours??'—')}</b><span class="m">hours</span></div><div class="stat"><b>${esc(sl.score??'—')}</b><span class="m">score</span></div><div class="stat"><b>${ci?esc(ci.sleep_quality):'—'}</b><span class="m">felt</span></div></div>${sl.notes?`<div class="m" style="margin-top:10px">${esc(sl.notes)}</div>`:''}`:'<div class="empty">No sleep data yet.</div>')}
 ${block('Morning check-in','',ci?`<div class="grid"><div class="stat"><b>${esc(ci.sleep_quality)}</b><span class="m">sleep</span></div><div class="stat"><b>${esc(ci.energy)}</b><span class="m">energy</span></div><div class="stat"><b style="font-size:16px">${esc(ci.mood||'—')}</b><span class="m">mood</span></div></div><div class="m" style="margin-top:10px">Soreness: ${esc(ci.soreness||'—')}${ci.note?' · '+esc(ci.note):''}</div>`:'<button id="ciopen" style="width:100%">Do check-in</button>')}`;
-$('#lo').onclick=logout;const b=$('#ciopen');if(b)b.onclick=()=>checkin(date);
+$('#lo').onclick=logout;$('#cp').onclick=()=>renderSetPattern(false);const b=$('#ciopen');if(b)b.onclick=()=>checkin(date);
 if(!ci&&localStorage.getItem('brief-ci-shown')!==date){localStorage.setItem('brief-ci-shown',date);checkin(date)}}
 function checkin(date){const v={sleep_quality:0,energy:0};const m=document.createElement('div');m.className='modal';
 const sc=k=>`<div class="scale" data-k="${k}">${[1,2,3,4,5].map(n=>`<button type="button" data-n="${n}">${n}</button>`).join('')}</div>`;
