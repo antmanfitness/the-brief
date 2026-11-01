@@ -88,6 +88,8 @@ input,textarea,select{width:100%;background:transparent;color:var(--text);border
 .sheet h2{font-size:22px;margin:4px 0 0}
 .sheet .group{background:var(--card2)}.sheet .scale button{background:#3a3a3c}
 .hide{display:none!important}
+.updt{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;transform:translateX(-50%);z-index:20;border:0;border-radius:999px;padding:10px 18px;font:600 14px -apple-system,system-ui,sans-serif;color:#fff;background:rgba(34,36,38,.72);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 0 .5px rgba(95,216,149,.45),0 8px 24px rgba(0,0,0,.5);max-width:calc(100% - 32px);white-space:nowrap;cursor:pointer}
+@media (prefers-reduced-transparency: reduce){.updt{background:#1c1c1e;-webkit-backdrop-filter:none;backdrop-filter:none}}
 
 /* ===== iOS 27 Liquid Glass layer ===== */
 :root{--glass:rgba(34,36,38,.64);--glass-strong:rgba(28,30,31,.72);--blur:blur(28px) saturate(190%);
@@ -196,6 +198,7 @@ main:not(.tab-today) .paneL{display:none}
 }
 </style></head><body><div id="app"></div>
 <script>
+const BUILD=9;let RESTORE_Y=0;
 const SB='https://bvbcydanngfzemnnbuxa.supabase.co',KEY='sb_publishable_6ty7ZiomiqfHSr8HT07-sQ_2gMLSkZe';
 const $=s=>document.querySelector(s),app=$('#app');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -251,7 +254,7 @@ app.innerHTML=`<div class="navbar" id="nb"><div class="nt">${title}</div></div><
 <div class="lt"><h1 id="lt">${title}</h1><div class="upd">${esc(upd)}</div>${TAB==='today'?'<h2 class="obj">Today’s objectives</h2>':''}</div>${D.is_example?'<div class="banner">EXAMPLE DATA — not real.</div>':''}<main id="view" class="tab-${TAB}"><div class="paneL" id="pl"></div><div class="paneR" id="pr"></div></main></div>
 <nav class="tabs">${TABS.map(t=>`<button class="${t[0]===TAB?'on':''}" data-t="${t[0]}" aria-label="${t[1]}">${svg(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>`;
 app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{const tb=$('.tabs');if(tb.classList.contains('min')&&b.dataset.t===TAB){tb.classList.remove('min');return}TAB=b.dataset.t;localStorage.setItem('brief-tab',TAB);shell();scrollTo(0,0)});
-vSummary($('#pl'));({today:vToday,orders:vOrders,sleep:vSleep,more:vMore})[TAB]($('#pr'));onScroll()}
+vSummary($('#pl'));({today:vToday,orders:vOrders,sleep:vSleep,more:vMore})[TAB]($('#pr'));if(RESTORE_Y){const y=RESTORE_Y;RESTORE_Y=0;requestAnimationFrame(()=>scrollTo(0,y))}onScroll()}
 let lastY=0;function onScroll(){const nb=$('#nb'),lt=$('#lt');if(!nb)return;const y=scrollY;const tb=$('.tabs');if(tb){if(y>lastY+6&&y>80)tb.classList.add('min');else if(y<lastY-6||y<40)tb.classList.remove('min');}lastY=y;nb.classList.toggle('sm',y>38);if(lt){const s=y<0?Math.min(1.12,1-y/400):Math.max(.8,1-y/200);lt.style.transform=`scale(${s})`;lt.style.opacity=y>45?0:1}}
 addEventListener('scroll',onScroll,{passive:true});
 // pull to refresh
@@ -308,7 +311,7 @@ function bindCi(){const b=$('#ciopen');if(b)b.onclick=()=>checkin(DATE)}
 function vMore(v){v.innerHTML=`<div class="sh" style="margin-top:0"><span>Morning check-in</span></div>${DS('Your quick morning check-in')}<div class="group">${ciCard(D.checkin).replace(/^.*?<div class="group">/s,'').replace(/<\/div>$/,'')}</div>
 <div class="sh"><span>Account</span></div><div class="group"><div class="cell ind press" id="cp"><div class="ic sq" style="background:#8e8e93">${svg('key')}</div><div class="grow">Change password</div><span class="chev2">›</span></div>
 <div class="cell ind press" id="lo"><div class="ic sq" style="background:var(--red)">${svg('out')}</div><div class="grow red">Sign out</div></div></div>
-<p class="sub sm" style="text-align:center;margin-top:24px">The Brief · for Krishna</p>`;
+<p class="sub sm" style="text-align:center;margin-top:24px">The Brief · for Krishna</p><p class="sub sm" id="build" style="text-align:center;margin-top:4px">Build v${BUILD}</p>`;
 bindCi();$('#cp').onclick=()=>renderNewPassword(false);$('#lo').onclick=logout}
 function checkin(date){if($('.modal'))return;const v={sleep_quality:0,energy:0};const m=document.createElement('div');m.className='modal';
 const sc=k=>`<div class="scale" data-k="${k}">${[1,2,3,4,5].map(n=>`<button type="button" class="press" data-n="${n}">${n}</button>`).join('')}</div>`;
@@ -334,6 +337,21 @@ async function load(){if(!sess)return renderLogin();app.innerHTML='<p class="sub
 try{const own=await api('/rest/v1/brief_owners?select=user_id');if(!own.length){logout();return renderLogin('This account is not allowed.')}
 await fetchDay();shell();if(!D.checkin&&localStorage.getItem('brief-ci-shown')!==DATE){localStorage.setItem('brief-ci-shown',DATE);setTimeout(()=>checkin(DATE),400)}}
 catch(x){if(sess)app.innerHTML=`<div class="login"><div class="group">${empty('spark',esc(x.message))}</div><button class="btn press" style="margin-top:12px" onclick="load()">Retry</button></div>`}}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+
+/* ---- auto-update ---- */
+let REG=null,PENDING=0;
+const busy=()=>!!document.querySelector('.modal')||!!(document.activeElement&&document.activeElement.matches('input,textarea,select'));
+function doReload(b){if(sessionStorage.getItem('brief-reloaded-for')===String(b))return false;sessionStorage.setItem('brief-reloaded-for',String(b));
+sessionStorage.setItem('brief-restore',JSON.stringify({tab:TAB,y:scrollY}));location.reload();return true}
+function toast(b){if($('#updt'))return;const t=document.createElement('button');t.id='updt';t.className='updt';t.textContent='New version ready • Tap to update';t.onclick=()=>{sessionStorage.removeItem('brief-reloaded-for');doReload(b)};document.body.appendChild(t)}
+function applyUpdate(b){PENDING=b;if(!busy()){if(!doReload(b))toast(b)}else toast(b)}
+async function checkVer(){try{if(REG)REG.update().catch(()=>{});const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});const j=await r.json();if(+j.build>BUILD)applyUpdate(+j.build)}catch(x){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){if(PENDING){sessionStorage.removeItem('brief-reloaded-for');sessionStorage.setItem('brief-restore',JSON.stringify({tab:TAB,y:scrollY}));sessionStorage.setItem('brief-reloaded-for',String(PENDING));setTimeout(()=>location.reload(),50)}}else checkVer()});
+addEventListener('focus',checkVer);setInterval(checkVer,5*60*1000);
+if('serviceWorker' in navigator){const had=!!navigator.serviceWorker.controller;
+navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{REG=r;r.update().catch(()=>{})}).catch(()=>{});
+navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had)return;if(sessionStorage.getItem('brief-cc')===String(BUILD))return;sessionStorage.setItem('brief-cc',String(BUILD));if(!busy()&&!PENDING)checkVer()})}
+(()=>{try{const r=JSON.parse(sessionStorage.getItem('brief-restore')||'null');if(r){sessionStorage.removeItem('brief-restore');if(r.tab){TAB=r.tab;localStorage.setItem('brief-tab',TAB)}RESTORE_Y=r.y||0}}catch(x){}})();
+setTimeout(checkVer,1500);
 if(!recoveryFromHash()){const eh=new URLSearchParams(location.hash.slice(1));if(eh.get('error')){history.replaceState(null,'',location.pathname);sess=null;localStorage.removeItem('brief-sess');renderLogin('That reset link has expired or was already used. Request a new one.')}else load()}
 </script></body></html>
