@@ -127,7 +127,8 @@ const arr=v=>Array.isArray(v)?v:(v?[v]:[]);
 const empty=(ic,t)=>`<div class="empty">${svg(ic)}<div>${t}</div></div>`;
 const etTime=d=>new Date(d).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'});
 function nowMin(){const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'numeric',hour12:false}).formatToParts(new Date());const g=t=>+p.find(x=>x.type===t).value;return (g('hour')%24)*60+g('minute')}
-function toMin(t){const m=String(t||'').trim().match(/^(\d{1,2})(?::(\d{2}))?\s*([ap]\.?m\.?)?/i);if(!m)return 9999;let h=+m[1];const mi=+(m[2]||0),ap=(m[3]||'').toLowerCase();if(ap.startsWith('p')&&h<12)h+=12;if(ap.startsWith('a')&&h===12)h=0;return h*60+mi}
+const WD=['sun','mon','tue','wed','thu','fri','sat'];function toMin(t){let str=String(t||'').trim(),off=0;const w=str.match(/^(sun|mon|tue|wed|thu|fri|sat)[a-z]*\.?,?\s*/i);if(w){const td=WD.indexOf(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short'}).format(new Date()).slice(0,3).toLowerCase());off=((WD.indexOf(w[1].toLowerCase())-td+7)%7)*1440;str=str.slice(w[0].length)}const r=toMin0(str);return r>=9999?9999+off:r+off}
+function toMin0(t){const m=String(t||'').trim().match(/^(\d{1,2})(?::(\d{2}))?\s*([ap]\.?m\.?)?/i);if(!m)return 9999;let h=+m[1];const mi=+(m[2]||0),ap=(m[3]||'').toLowerCase();if(ap.startsWith('p')&&h<12)h+=12;if(ap.startsWith('a')&&h===12)h=0;return h*60+mi}
 function oStat(s){const l=String(s||'').toLowerCase();if(/deliver/.test(l)&&!/out for/.test(l))return'd';if(/(delay|exception|fail|return|action|issue|problem|held|pickup|cancel|refund)/.test(l))return'a';return't'}
 const OG={a:['Needs action','p-r'],t:['In transit','p-b'],d:['Delivered','p-g']};
 let D={},DATE='',TAB=localStorage.getItem('brief-tab')||'today';
